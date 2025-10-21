@@ -1,7 +1,7 @@
 # 💀 DEADLOCK
 Jeu d’énigmes collaboratif inspiré de Unlock!
 > Projet de 1ère année – Cybersécurité – IPSSI  
-> Équipe : Illona Delsiak, Cassini-Peloux Luca, Ayoub, Dorian, Matis, Sevan, Maël Costa
+> Équipe : Illona Delsiak, Cassini-Peloux Luca, Ayoub, Dorian, Mathis, Sevan, Maël Costa
 > Année : 2025
 
 # 🎯 Objectif du projet
