@@ -18,9 +18,9 @@ Jeu d’énigmes collaboratif inspiré de Unlock!
 - Les indices et les pénalités disponibles pour équilibrer la difficulté.
 
 # Technologies
-- Front-end : React + Vite.
-- Back-end : Firebase.
-- UI/Design : TailwindCSS, Figma.
+- Front-end (personnes) : React + Vite.
+- Back-end (personnes) : Firebase.
+- UI/Design (personnes) : TailwindCSS, Figma.
 - Hébergement : Vercel
 - Collaboration : Github, Discord
 - Tests : ESLint, Prettier, Playwright
