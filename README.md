@@ -28,7 +28,7 @@ Jeu d’énigmes inspiré d'Unlock!
 # Technologies
 - Front-end (Ayoub, Maël Costa, Romain, Cassini-Peloux Luca) : HTML, CSS et JavaScript <=> React + Vite.
 - Back-end (Sevan, Mathis, Dorian Feraud, Cassini-Peloux Luca) : Javascript, Python, PHP, C# <=> Firebase.
-- UI/Design (Ilona Delmote) : HTML, Javascript, CSS <=> TailwindCSS, Figma.
+- UI/Design (Ilona Delmote, Cassini-Peloux Luca) : HTML, Javascript, CSS <=> TailwindCSS, Figma.
 - Hébergement : Vercel
 - Collaboration : Github, Discord
 - Tests : ESLint, Prettier, Playwright
