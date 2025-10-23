@@ -1,5 +1,5 @@
-# DEADLOCK
-Jeu d’énigmes collaboratif inspiré de Unlock!
+# DEADLOCK ![logo](./Images/a03c87f5-8ba2-4b22-8ff0-f274fae28a25.jpg)
+Jeu d’énigmes inspiré d'Unlock!
 > Projet de 1ère année – Cybersécurité – IPSSI  
 > Équipe : Ilona Delmotte, Cassini-Peloux Luca, Ayoub, Dorian Feraud, Mathis, Sevan, Maël Costa
 > Année : 2025
@@ -18,8 +18,17 @@ Jeu d’énigmes collaboratif inspiré de Unlock!
 - Les indices et les pénalités disponibles pour équilibrer la difficulté.
 
 # Technologies
-- Front-end (Ayoub, Dorian Feraud, Romain) : HTML, CSS et JavaScript <=> React + Vite.
-- Back-end (Sevan, Mathis) : Javascript, Python, PHP, C# <=> Firebase.
+- Front-end (Ayoub, Romain) : HTML, CSS et JavaScript <=> React + Vite.
+- Back-end (Sevan, Mathis, Dorian Feraud) : Javascript, Python, PHP, C# <=> Firebase.
+- UI/Design (Ilona Delmote) : HTML, Javascript, CSS <=> TailwindCSS, Figma.
+- Hébergement : Vercel
+- Collaboration : Github, Discord
+- Tests : ESLint, Prettier, Playwright
+
+
+# Technologies
+- Front-end (Ayoub, Maël Costa, Romain) : HTML, CSS et JavaScript <=> React + Vite.
+- Back-end (Sevan, Mathis, Dorian Feraud) : Javascript, Python, PHP, C# <=> Firebase.
 - UI/Design (Ilona Delmote) : HTML, Javascript, CSS <=> TailwindCSS, Figma.
 - Hébergement : Vercel
 - Collaboration : Github, Discord
