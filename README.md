@@ -1,4 +1,4 @@
-# DEADLOCK ![logo](./Images/a03c87f5-8ba2-4b22-8ff0-f274fae28a25.jpg)
+# DEADLOCK ![logo](./images/a03c87f5-8ba2-4b22-8ff0-f274fae28a25.jpg)
 Jeu d’énigmes inspiré d'Unlock!
 > Projet de 1ère année – Cybersécurité – IPSSI  
 > Équipe : Ilona Delmotte, Cassini-Peloux Luca, Ayoub, Dorian Feraud, Mathis, Sevan, Maël Costa
