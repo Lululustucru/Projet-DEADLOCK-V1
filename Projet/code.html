@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Prototype Unlock-like — Front-end</title>
+<style>
+:root{
+  --bg:#071426; --panel:#0b2230; --muted:#9fb0c3; --accent:#0ea5e9; --good:#7ee787; --danger:#ff6b6b;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; font-family:Inter, system-ui, Arial; background:linear-gradient(180deg,var(--bg),#021827); color:#e6f5ff;
+  display:flex; align-items:center; justify-content:center; min-height:100vh; padding:18px;
+}
+.app{
+  width:100%; max-width:1100px; display:grid; grid-template-columns:1fr 360px; gap:18px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:12px; padding:16px; box-shadow:0 20px 60px rgba(0,0,0,0.6);
+}
+
+.left{ padding:8px; }
+.header{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:10px; }
+.brand{ display:flex; gap:12px; align-items:center; }
+.logo{ width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#7c3aed); display:flex;align-items:center;justify-content:center;font-weight:800;color:#021122 }
+.title{ font-size:18px; margin:0 }
+.subtitle{ font-size:12px; color:var(--muted); margin:0 }
+
+
+.controls{ display:flex; gap:8px; align-items:center; }
+.btn{ background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--accent); padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700 }
+.btn.ghost{ color:var(--muted); border-color: rgba(255,255,255,0.03) }
+.btn.danger{ color:var(--danger); border-color: rgba(255,100,100,0.08) }
+
+
+.deck{ display:flex; flex-wrap:wrap; gap:12px; padding:6px; }
+.card{
+  width:110px; height:150px; border-radius:10px; background:linear-gradient(180deg,#051b27,#06293a);
+  display:flex; flex-direction:column; justify-content:flex-end; padding:10px; cursor:pointer; position:relative;
+  border:1px solid rgba(255,255,255,0.02);
+  box-shadow:0 8px 20px rgba(0,0,0,0.5);
+}
+.card.locked{ opacity:0.28; filter:grayscale(0.6); cursor:default }
+.card .num{ font-size:26px; font-weight:800; color:var(--accent) }
+.card .label{ font-size:12px; color:var(--muted) }
+
+
+.viewer{ margin-top:12px; background:linear-gradient(180deg,#071426,#04202b); padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.02); display:none }
+.viewer .meta{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px }
+.viewer .content{ background:#fff; color:#021122; border-radius:8px; padding:12px; min-height:120px; }
+
+
+.side{ padding:8px; display:flex; flex-direction:column; gap:12px; }
+.panel{ background:var(--panel); padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.02) }
+.timer{ font-size:28px; font-weight:800; color:var(--accent); text-align:center }
+.small{ font-size:12px; color:var(--muted) }
+
+.hints{ max-height:200px; overflow:auto; }
+.hints .hint{ padding:8px; border-radius:8px; margin-bottom:8px; color:var(--muted); background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent); font-size:13px }
+.hints .hint.revealed{ color:#e6f5ff; border:1px solid rgba(14,165,233,0.06); background:linear-gradient(90deg, rgba(14,165,233,0.03), transparent) }
+
+
+.log{ max-height:260px; overflow:auto; color:var(--muted); font-size:13px; }
+
+
+.lock-input{ display:flex; gap:8px; margin-top:8px }
+.lock-input input{ flex:1; padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:inherit }
+
+
+.final{ text-align:center; padding:20px }
+
+
+@media (max-width:980px){ .app{ grid-template-columns:1fr; } .side{ order:2 } .left{ order:1 } }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="left">
+    <div class="header">
+      <div class="brand">
+        <div class="logo">UL</div>
+        <div>
+          <h1 class="title">Prototype Unlock-like</h1>
+          <div class="subtitle">Jeu complet front-end — personnalise les cartes</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div style="text-align:right">
+          <div class="small">Temps restant</div>
+          <div id="timer" class="timer">30:00</div>
+        </div>
+        <button id="btnStart" class="btn">Démarrer</button>
+        <button id="btnReset" class="btn ghost">Réinitialiser</button>
+      </div>
+    </div>
+
+    <div class="deck" id="deck"></div>
+
+    <div class="viewer" id="viewer" aria-live="polite">
+      <div class="meta">
+        <div class="left"><strong>Carte</strong> <span id="viewerNum"></span></div>
+        <div class="right small" id="viewerType"></div>
+      </div>
+      <div class="content" id="viewerContent"></div>
+
+      <div style="display:flex; gap:8px; margin-top:10px; align-items:center">
+        <button id="btnAskHint" class="btn">Demander indice</button>
+        <div style="flex:1"></div>
+        <div class="lock-input" id="lockArea" style="display:none">
+          <input id="lockInput" placeholder="Entrer code">
+          <button id="btnSubmitLock" class="btn">Valider</button>
+        </div>
+        <button id="btnClose" class="btn ghost">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <aside class="side">
+    <div class="panel">
+      <div style="display:flex; justify-content:space-between; align-items:center">
+        <strong>Indices</strong>
+        <div class="small"><span id="hintsRevealed">0</span>/<span id="hintsTotal">0</span></div>
+      </div>
+      <div class="hints" id="hintsList" style="margin-top:10px"></div>
+      <div style="margin-top:8px; display:flex; gap:8px">
+        <button id="btnGlobalHint" class="btn ghost">Indice global (-60s)</button>
+        <button id="btnAutoSolve" class="btn ghost">Auto-resp: OFF</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div style="display:flex; justify-content:space-between; align-items:center">
+        <strong>Verrous / Codes</strong>
+        <div class="small">Saisis un code</div>
+      </div>
+      <div class="lock-input" style="margin-top:8px">
+        <input id="globalCodeInput" placeholder="code">
+        <button id="btnGlobalSubmit" class="btn">Valider</button>
+      </div>
+      <div class="small" style="margin-top:6px">Pénalités pour mauvaises tentatives : -30s</div>
+    </div>
+
+    <div class="panel">
+      <div style="display:flex; justify-content:space-between; align-items:center">
+        <strong>Journal</strong>
+        <div class="small" id="solvedCount">0 cartes résolues</div>
+      </div>
+      <div class="log" id="log"></div>
+    </div>
+  </aside>
+</div>
+
+<script>
+
+const CONFIG = {
+  durationSec: 30 * 60,      // total time (seconds)
+  hintPenaltySec: 60,        // each hint costs 60s
+  wrongPenaltySec: 30,       // wrong code penalty
+  autoReply: true
+};
+
+const SCENARIO = {
+  title: "Mystère Express",
+  cards: [
+    { id: 1, title:"Entrée", type:"Description", content:"La porte est fermée. Un paillasson humé.", hints:["Regarde le paillasson.", "Il y a une tache en forme de cercle."], code:null },
+    { id: 2, title:"Bureau", type:"Enigme", content:"Un papier indique : carré de 3 -> 09 ; carré de 2 -> 04. Combinaison 0904.", hints:["Pense aux carrés.", "Utilise 2 chiffres pour chaque carré."], code:"0904" },
+    { id: 3, title:"Bibliothèque", type:"Recherche", content:"Des livres forment une séquence de couleurs; note 213.", hints:["Bleu =2, Rouge=1, Vert=3"], code:"213" },
+    { id: 4, title:"Cave", type:"Puzzle", content:"Un coffre verrouillé 4 chiffres. Renseignement : 7312.", hints:["Regarde le mural."], code:"7312" },
+    { id: 5, title:"Bureau secret", type:"Final", content:"Assemble les codes : crate(7312)+desk(0904)+books(213) -> 73120904213", hints:["Code final = concaténation des 3 indices précédents"], code:"73120904213" }
+  ]
+};
+
+
+let state = {
+  remaining: CONFIG.durationSec,
+  timerInterval: null,
+  started: false,
+  hintsRevealed: 0,
+  totalHints: SCENARIO.cards.reduce((s,c) => s + (c.hints?c.hints.length:0), 0),
+  solved: {}, // cardId:true
+  autoReply: CONFIG.autoReply
+};
+
+
+const deckEl = document.getElementById('deck');
+const viewer = document.getElementById('viewer');
+const viewerNum = document.getElementById('viewerNum');
+const viewerType = document.getElementById('viewerType');
+const viewerContent = document.getElementById('viewerContent');
+const btnAskHint = document.getElementById('btnAskHint');
+const btnClose = document.getElementById('btnClose');
+const btnStart = document.getElementById('btnStart');
+const btnReset = document.getElementById('btnReset');
+const timerEl = document.getElementById('timer');
+const hintsList = document.getElementById('hintsList');
+const hintsRevealedEl = document.getElementById('hintsRevealed');
+const hintsTotalEl = document.getElementById('hintsTotal');
+const btnGlobalHint = document.getElementById('btnGlobalHint');
+const logEl = document.getElementById('log');
+const solvedCountEl = document.getElementById('solvedCount');
+const lockArea = document.getElementById('lockArea');
+const lockInput = document.getElementById('lockInput');
+const btnSubmitLock = document.getElementById('btnSubmitLock');
+const btnGlobalSubmit = document.getElementById('btnGlobalSubmit');
+const globalCodeInput = document.getElementById('globalCodeInput');
+const btnAutoSolve = document.getElementById('btnAutoSolve');
+
+
+hintsTotalEl.textContent = state.totalHints;
+renderDeck();
+updateTimerDisplay();
+log("Scénario chargé.");
+
+
+function renderDeck(){
+  deckEl.innerHTML = '';
+  SCENARIO.cards.forEach(card => {
+    const d = document.createElement('div');
+    d.className = 'card' + (state.solved[card.id] ? ' locked' : '');
+    d.dataset.id = card.id;
+    d.innerHTML = `<div style="flex:1"></div><div class="num">${card.id}</div><div class="label">${card.title}</div>`;
+    if(!state.solved[card.id]){
+      d.onclick = ()=> openCard(card.id);
+    }
+    deckEl.appendChild(d);
+  });
+}
+
+let currentCard = null;
+function openCard(id){
+  const card = SCENARIO.cards.find(c => c.id === id);
+  if(!card) return;
+  currentCard = card;
+  viewer.style.display = 'block';
+  viewerNum.textContent = `${card.id} — ${card.title}`;
+  viewerType.textContent = card.type;
+  viewerContent.textContent = card.content;
+    autoReplyIfEnabled(card);
+  if(card.code){
+    lockArea.style.display = 'flex';
+    lockInput.value = '';
+    btnSubmitLock.onclick = ()=> submitCardCode(card.id, lockInput.value.trim());
+  } else {
+    lockArea.style.display = 'none';
+  }
+  btnAskHint.onclick = ()=> askHintForCard(card.id);
+  btnClose.onclick = ()=> { viewer.style.display = 'none'; currentCard = null; };
+  log(`Ouverture carte ${card.id}: ${card.title}`);
+}
+
+/* =========================
+  HINTS (card-level and global)
+   ========================= */
+function askHintForCard(cardId){
+  const card = SCENARIO.cards.find(c=>c.id===cardId);
+  if(!card || !card.hints || card.hints.length === 0){
+    log("Aucun indice pour cette carte.");
+    return;
+  }
+  
+
+  const revealedForThis = Array.from(hintsList.children).filter(n => n.dataset.card == cardId).length;
+  if(revealedForThis < card.hints.length){
+    
+    state.hintsRevealed++;
+    state.remaining = Math.max(0, state.remaining - CONFIG.hintPenaltySec);
+    updateTimerDisplay();
+    const hintText = card.hints[revealedForThis];
+    const el = document.createElement('div'); el.className = 'hint revealed'; el.dataset.card = cardId;
+    el.textContent = `Carte ${cardId} — Indice ${revealedForThis+1}: ${hintText}`;
+    hintsList.appendChild(el);
+    hintsRevealedEl.textContent = state.hintsRevealed;
+    log(`Indice (carte ${cardId}): ${hintText}`);
+  } else {
+    log("Plus d'indices pour cette carte.");
+    alert("Plus d'indices pour cette carte.");
+  }
+}
+
+btnGlobalHint.onclick = ()=> {
+
+  if(state.hintsRevealed >= state.totalHints){
+    alert("Plus d'indices disponibles.");
+    return;
+  }
+
+  for(const card of SCENARIO.cards){
+    const revealedForThis = Array.from(hintsList.children).filter(n => n.dataset.card == card.id).length;
+    if(card.hints && revealedForThis < card.hints.length){
+  
+      state.hintsRevealed++;
+      state.remaining = Math.max(0, state.remaining - CONFIG.hintPenaltySec);
+      updateTimerDisplay();
+      const hintText = card.hints[revealedForThis];
+      const el = document.createElement('div'); el.className = 'hint revealed'; el.dataset.card = card.id;
+      el.textContent = `Carte ${card.id} — Indice ${revealedForThis+1}: ${hintText}`;
+      hintsList.appendChild(el);
+      hintsRevealedEl.textContent = state.hintsRevealed;
+      log(`Indice global: ${hintText}`);
+      return;
+    }
+  }
+  alert("Plus d'indices disponibles.");
+};
+
+
+function submitCardCode(cardId, code){
+  const card = SCENARIO.cards.find(c=>c.id===cardId);
+  if(!card) return;
+  if(card.code && code === card.code){
+    markSolved(cardId);
+    alert("Code correct — carte résolue !");
+    log(`Code correct pour carte ${cardId}`);
+    viewer.style.display = 'none';
+  } else {
+    // wrong
+    state.remaining = Math.max(0, state.remaining - CONFIG.wrongPenaltySec);
+    updateTimerDisplay();
+    state.penalties = (state.penalties || 0) + 1;
+    log(`Mauvaise tentative sur carte ${cardId} — pénalité ${CONFIG.wrongPenaltySec}s`);
+    alert("Mauvaise tentative — pénalité appliquée.");
+  }
+}
+
+document.getElementById('btnGlobalSubmit').onclick = ()=> {
+  const code = globalCodeInput.value.trim();
+  if(!code) return;
+  const match = SCENARIO.cards.find(c => c.code && c.code === code && !state.solved[c.id]);
+  if(match){
+    markSolved(match.id);
+    log(`Code global correct — carte ${match.id} résolue`);
+    alert(`Code correct — carte ${match.id} résolue !`);
+  } else {
+    state.remaining = Math.max(0, state.remaining - CONFIG.wrongPenaltySec);
+    updateTimerDisplay();
+    state.penalties = (state.penalties || 0) + 1;
+    log(`Tentative globale incorrecte: ${code} — pénalité ${CONFIG.wrongPenaltySec}s`);
+    alert("Code incorrect — pénalité appliquée.");
+  }
+  globalCodeInput.value = '';
+};
+
+
+function markSolved(cardId){
+  state.solved[cardId] = true;
+  renderDeck();
+  const solvedCount = Object.keys(state.solved).length;
+  solvedCountEl.textContent = `${solvedCount} cartes résolues`;
+  document.getElementById('solvedCount').textContent = `${solvedCount} cartes résolues`;
+  log(`Carte ${cardId} résolue`);
+  const allSolved = SCENARIO.cards.every(c => state.solved[c.id]);
+  if(allSolved){
+    endGame(true);
+  }
+}
+
+function updateTimerDisplay(){
+  const m = Math.floor(state.remaining / 60).toString().padStart(2,'0');
+  const s = (state.remaining % 60).toString().padStart(2,'0');
+  timerEl.textContent = `${m}:${s}`;
+}
+
+function startGame(){
+  if(state.started) return;
+  state.started = true;
+  btnStart.disabled = true;
+  state.timerInterval = setInterval(()=>{
+    state.remaining--;
+    if(state.remaining <= 0){
+      state.remaining = 0;
+      updateTimerDisplay();
+      endGame(false);
+      clearInterval(state.timerInterval);
+    } else {
+      updateTimerDisplay();
+    }
+  },1000);
+  log("Partie démarrée");
+}
+
+function resetGame(){
+  if(!confirm("Réinitialiser la partie ?")) return;
+  clearInterval(state.timerInterval);
+  state = {
+    remaining: CONFIG.durationSec,
+    timerInterval: null,
+    started:false,
+    hintsRevealed:0,
+    totalHints:SCENARIO.cards.reduce((s,c)=>s+(c.hints?c.hints.length:0),0),
+    solved:{},
+    autoReply: CONFIG.autoReply
+  };
+  hintsList.innerHTML = '';
+  hintsRevealedEl.textContent = 0;
+  renderDeck();
+  updateTimerDisplay();
+  btnStart.disabled = false;
+  log("Partie réinitialisée");
+}
+
+function log(text){
+  const t = new Date().toLocaleTimeString();
+  const div = document.createElement('div');
+  div.innerHTML = `<div style="font-size:13px">${text}</div><div class="small" style="color:var(--muted)">${t}</div>`;
+  logEl.prepend(div);
+  document.getElementById('solvedCount').textContent = Object.keys(state.solved).length + ' cartes résolues';
+}
+
+
+function endGame(win){
+  clearInterval(state.timerInterval);
+  viewer.style.display = 'none';
+  const finalPanel = document.createElement('div');
+  finalPanel.className = 'final';
+  if(win){
+    const score = Math.max(0, state.remaining - (state.penalties||0)*CONFIG.hintPenaltySec);
+    finalPanel.innerHTML = `<h2>Victoire 🎉</h2><p>Temps restant : ${formatTime(state.remaining)}</p><p>Pénalités : ${state.penalties||0}</p><p>Score estimé : ${score}</p>`;
+  } else {
+    finalPanel.innerHTML = `<h2>Temps écoulé ⏰</h2><p>Tu as perdu — réessaie !</p>`;
+  }
+
+  deckEl.innerHTML = '';
+  deckEl.appendChild(finalPanel);
+  log(win ? "Victoire — partie terminée" : "Défaite — temps écoulé");
+  btnStart.disabled = false;
+}
+
+function formatTime(sec){
+  const m = Math.floor(sec/60).toString().padStart(2,'0');
+  const s = (sec%60).toString().padStart(2,'0');
+  return `${m}:${s}`;
+}
+
+btnAutoSolve.onclick = ()=> {
+  state.autoReply = !state.autoReply;
+  btnAutoSolve.textContent = state.autoReply ? 'Auto-resp: ON' : 'Auto-resp: OFF';
+};
+
+function autoReplyIfEnabled(card){
+  if(!state.autoReply) return;
+
+  setTimeout(()=>{
+    const botText = `Hint bot: relis la carte ${card.id}.`;
+    log(botText);
+  },700);
+}
+
+document.getElementById('btnStart').onclick = startGame;
+document.getElementById('btnReset').onclick = resetGame;
+document.getElementById('btnGlobalHint').onclick = ()=> { if(!state.started){ alert("Démarre la partie d'abord."); return;} btnGlobalHint.disabled=true; setTimeout(()=>btnGlobalHint.disabled=false,800); btnGlobalHint.click(); };
+document.getElementById('btnAskHint').onclick = ()=> { if(currentCard) askHintForCard(currentCard.id); else alert('Ouvre d\'abord une carte'); };
+
+
+deckEl.addEventListener('dblclick', (e)=> {
+  const cardEl = e.target.closest('.card');
+  if(cardEl && cardEl.dataset.id) openCard(Number(cardEl.dataset.id));
+});
+
+document.addEventListener('keydown', (e)=> {
+  if(e.key === 'h') { if(state.started) btnGlobalHint.click(); else alert('Démarre la partie d\'abord.'); }
+  if(e.key === 'Escape') { viewer.style.display='none'; }
+});
+
+
+window.UNLOCK = { SCENARIO, CONFIG, state, markSolved, startGame, resetGame, openCard };
+
+</script>
+</body>
+</html>
+
