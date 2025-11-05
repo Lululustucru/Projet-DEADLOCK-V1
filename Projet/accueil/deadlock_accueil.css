@@ -1,8 +1,12 @@
+#image_photo{   
+    text-align: center;
+}
+
 .bouton_inscription {
     border: 0;;
     padding: 20px;
-    font-size: 1rem;
-    text-align: center;
+    font-size: 50px;
+    align-content: center;
     color: #fff;
     border-radius: 10px;
     background-color: rgba(220, 0, 0, 1);
