@@ -120,12 +120,13 @@ if (isset($sampleGetForm)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion</title>
+    <link rel="stylesheet" href="deadlock_player_connexion.css">
+    <title>Inscription</title>
 </head>
 
 <body>
     <section>
-        <h2>Connexion</h2>
+        <h2 id="titre">Création d'un compte</h2>
 
         <form action="" method="GET">
             <!-- champ email-->
@@ -148,7 +149,7 @@ if (isset($sampleGetForm)) {
             ?>
 
 
-            <label for="email">E-mail
+            <label for="email">Saisissez votre e-mail :
                 <input type="text" name="email" id="email" value="<?php echo isset($email) ? $email : ""; ?>">
             </label>
 
@@ -161,7 +162,7 @@ if (isset($sampleGetForm)) {
                 }
             }
             ?>
-            <label for="mdp">Mot de passe
+            <label for="mdp">Saisissez un mot de passe : 
                 <input type="password" name="mdp" id="mdp" value="<?php echo isset($mdp) ? $mdp : ""; ?>">
             </label>
 
@@ -169,6 +170,7 @@ if (isset($sampleGetForm)) {
 
             <button type="submit" id="submit">Inscription</button>
         </form>
+    </section>
         
         <?php
             if (count($errors) === 0 && isset($message)):

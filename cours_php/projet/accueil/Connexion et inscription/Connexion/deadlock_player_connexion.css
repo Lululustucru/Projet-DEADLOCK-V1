@@ -1,0 +1,14 @@
+#barre_de_connexion {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+#titre {
+    font-size: 20px;
+    color: #333;
+    align-items: center;
+}
