@@ -86,7 +86,7 @@ function ismdpvalid($mdp)
         case strlen($mdp) < 8:
             $mdpError = [
                 "type" => "mdp",
-                "message" => "Veuillez entrer un sujet d'au moins 8 caracteres",
+                "message" => "Mot de passe invalide",
             ];
             array_push($errors, $mdpError);
             break;
@@ -107,7 +107,7 @@ if (isset($sampleGetForm)) {
         $mdp = "";
     }
     else{
-        header('Location: deadlock_player_.php');
+        header('Location: ../../../niveau/liste_niveaux.html');
     }
 
 }
@@ -120,13 +120,12 @@ if (isset($sampleGetForm)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="deadlock_player_connexion.css">
-    <title>Inscription</title>
+    <title>Connexion</title>
 </head>
 
 <body>
     <section>
-        <h2 id="titre">Création d'un compte</h2>
+        <h2>Connexion</h2>
 
         <form action="" method="GET">
             <!-- champ email-->
@@ -149,7 +148,7 @@ if (isset($sampleGetForm)) {
             ?>
 
 
-            <label for="email">Saisissez votre e-mail :
+            <label for="email">E-mail
                 <input type="text" name="email" id="email" value="<?php echo isset($email) ? $email : ""; ?>">
             </label>
 
@@ -162,20 +161,15 @@ if (isset($sampleGetForm)) {
                 }
             }
             ?>
-            <label for="mdp">Saisissez un mot de passe : 
+            <label for="mdp">Mot de passe
                 <input type="password" name="mdp" id="mdp" value="<?php echo isset($mdp) ? $mdp : ""; ?>">
             </label>
 
             <input type="hidden" name="sampleGetForm">
 
-            <button type="submit" id="submit">Inscription</button>
+            <button type="submit" id="submit">Connexion</button>
+            <br><br>
+            <p>Pas encore de compte ?
+            <a href="../Inscriptions/deadlock_player_inscription.php">Inscrivez-vous</a>
+            </p>
         </form>
-    </section>
-        
-        <?php
-            if (count($errors) === 0 && isset($message)):
-        ?>
-            <p>Votre message : <?php echo htmlspecialchars($message); ?></p>
-        <?php
-            endif;
-        ?>

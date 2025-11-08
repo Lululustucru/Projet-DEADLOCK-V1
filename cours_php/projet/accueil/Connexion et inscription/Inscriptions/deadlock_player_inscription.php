@@ -86,7 +86,7 @@ function ismdpvalid($mdp)
         case strlen($mdp) < 8:
             $mdpError = [
                 "type" => "mdp",
-                "message" => "Veuillez entrer un sujet d'au moins 8 caracteres",
+                "message" => "Mot de passe trop court. Le mot de passe doit contenir au moins 8 caracteres",
             ];
             array_push($errors, $mdpError);
             break;
@@ -107,7 +107,7 @@ if (isset($sampleGetForm)) {
         $mdp = "";
     }
     else{
-        header('Location: deadlock_player_.php');
+        header('Location: ../Connexion/deadlock_player_connexion.php');
     }
 
 }
@@ -120,12 +120,13 @@ if (isset($sampleGetForm)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion</title>
+    <link rel="stylesheet" href="deadlock_player_connexion.css">
+    <title>Inscription</title>
 </head>
 
 <body>
     <section>
-        <h2>Connexion</h2>
+        <h2>Création d'un compte</h2>
 
         <form action="" method="GET">
             <!-- champ email-->
@@ -148,7 +149,7 @@ if (isset($sampleGetForm)) {
             ?>
 
 
-            <label for="email">E-mail
+            <label for="email">Saisissez votre e-mail :
                 <input type="text" name="email" id="email" value="<?php echo isset($email) ? $email : ""; ?>">
             </label>
 
@@ -161,7 +162,7 @@ if (isset($sampleGetForm)) {
                 }
             }
             ?>
-            <label for="mdp">Mot de passe
+            <label for="mdp">Saisissez un mot de passe : 
                 <input type="password" name="mdp" id="mdp" value="<?php echo isset($mdp) ? $mdp : ""; ?>">
             </label>
 
@@ -169,11 +170,4 @@ if (isset($sampleGetForm)) {
 
             <button type="submit" id="submit">Inscription</button>
         </form>
-        
-        <?php
-            if (count($errors) === 0 && isset($message)):
-        ?>
-            <p>Votre message : <?php echo htmlspecialchars($message); ?></p>
-        <?php
-            endif;
-        ?>
+    </section>
