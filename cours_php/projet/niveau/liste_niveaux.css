@@ -1,0 +1,6 @@
+#niveaux{
+    display: inline;
+    justify-content: start;
+    gap: 20px;
+    font-family: 'Arial', sans-serif;
+}
