@@ -21,3 +21,8 @@
     inset -2px -2px 3px rgba(0, 0, 0, 0.6);
     text-decoration: none;
 }
+
+body {
+    background-color: black;
+    font-family: Arial, sans-serif;
+}
