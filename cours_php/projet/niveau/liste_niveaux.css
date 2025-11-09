@@ -1,6 +1,6 @@
 #niveaux{
     display: inline;
-    justify-content: start;
+    justify-content: center;
     gap: 20px;
     font-family: 'Arial', sans-serif;
 }
