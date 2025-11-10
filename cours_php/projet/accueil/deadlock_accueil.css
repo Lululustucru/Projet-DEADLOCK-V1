@@ -1,39 +1,69 @@
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 html, body {
-    margin: 0;
-    padding: 0;
     height: 100%;
-    font-family: Arial, sans-serif;
 }
 
-#image_photo {   
-    min-height: 100vh;
+body {
+    margin: 0;
+}
+
+#main {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
     display: flex;
-    justify-content: center; 
-    align-items: center;    
-
-    background-image: url("../images/image_deadlock.png");
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
+    justify-content: center;  
+    align-items: center;      
 }
 
 
-#button {
-    border: 0;
-    padding: 15px 40px;
-    font-size: 28px;
-    color: #fff;
-    border-radius: 999px;
-    background-color: rgba(0, 120, 215, 1);
-    text-decoration: none;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+#main::before {
+    content: "";
+    position: absolute;
+    inset: 0; 
+    background: url('../images/image_deadlock.png') center / cover no-repeat;
+    filter: blur(10px) brightness(0.5);
+    transform: scale(1.1); 
+}
 
-    box-shadow:
-        0 0 15px rgba(0, 120, 215, 0.9),
-        0 0 35px rgba(0, 120, 215, 0.6);
+
+#image_photo {
+    position: relative; 
+    z-index: 1;         
+    max-height: 90vh;
+    max-width: 90vw;
+}
+
+
+#image_photo img {
+    display: block;
+    max-height: 90vh;
+    max-width: 90vw;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+
+#boutton_jouer {
+    position: absolute;
+    left: 50%;            
+    bottom: 5%;           
+    transform: translateX(-50%);
+
+    padding: 1rem 3rem;
+    border-radius: 999px;
+    border: none;
+    font-size: 1rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    background: #007bff;
+    color: #fff;
+    cursor: pointer;
 }
