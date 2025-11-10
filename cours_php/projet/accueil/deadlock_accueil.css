@@ -1,28 +1,39 @@
-#image_photo{   
-    display: flex;
-    justify-content: center;
+* {
+    box-sizing: border-box;
 }
 
-#connexion_inscription {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
 }
+
+#image_photo {   
+    min-height: 100vh;
+    display: flex;
+    justify-content: center; 
+    align-items: center;    
+
+    background-image: url("../images/image_deadlock.png");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 
 #button {
     border: 0;
-    padding: 15px 30px;
-    font-size: 30px;
+    padding: 15px 40px;
+    font-size: 28px;
     color: #fff;
-    border-radius: 10px;
+    border-radius: 999px;
     background-color: rgba(0, 120, 215, 1);
-    box-shadow:
-    inset 2px 2px 3px rgba(255, 255, 255, 0.6),
-    inset -2px -2px 3px rgba(0, 0, 0, 0.6);
     text-decoration: none;
-}
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
 
-body {
-    background-color: black;
-    font-family: Arial, sans-serif;
+    box-shadow:
+        0 0 15px rgba(0, 120, 215, 0.9),
+        0 0 35px rgba(0, 120, 215, 0.6);
 }
