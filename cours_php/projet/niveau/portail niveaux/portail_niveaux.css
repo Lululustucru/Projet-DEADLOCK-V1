@@ -94,7 +94,7 @@ body {
 .portal-link{
     position:absolute;
     left:50%; top:50%;
-  width:40vmin; height:40vmin; /* ajuste le diamètre */
+    width:40vmin; height:40vmin;
     transform: translate(-50%,-50%);
     border-radius:50%;
     z-index:10; cursor:pointer; background:transparent;
