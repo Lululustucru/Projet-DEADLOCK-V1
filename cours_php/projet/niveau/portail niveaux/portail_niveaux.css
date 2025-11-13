@@ -14,6 +14,10 @@ body {
     --dl-accent: #39E3DD;
     --dl-text: #E6FFFB;
     --dl-border: #04555A;
+    --portal-x: 50%;
+    --portal-y: 58%;
+    --portal-inner: 18%;
+    --portal-outer: 56%;
 }
 
 #main{
@@ -33,10 +37,66 @@ body {
 
 #conteneur_image{
     position:relative; z-index:2;
-    width:min(70vw,1000px);
-    height:min(70vh,600px);
-    display:grid; place-items:center;
 }
-#iconteneur_image img{
+#conteneur_image img{
     width:100%; height:100%; object-fit:contain; display:block;
 }
+
+#main:hover::before{
+    filter: brightness(.82) saturate(1.18);
+}
+
+#main:hover::after{
+    opacity:1;
+    transform: scale(1.04);
+    animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+    from { transform: scale(1) rotate(0deg);   opacity:.85; }
+    to   { transform: scale(1.1) rotate(360deg); opacity:1; }
+}
+
+#energy{
+    position:absolute; 
+    inset:0; z-index:1;
+    pointer-events:none;
+  /* masque (met le bon chemin si besoin) */
+    -webkit-mask: url("../../images/portal_mask_interior.png") no-repeat center / 100% 100%;
+            mask: url("../../images/portal_mask_interior.png") no-repeat center / 100% 100%;
+
+    mix-blend-mode: screen;
+    background:
+    radial-gradient(120% 70% at 50% 60%, rgba(0,255,255,.18), transparent 60%),
+    conic-gradient(from 0deg at 50% 60%,
+        rgba(0,255,255,0) 0 40deg,
+        rgba(0,255,255,.22) 80deg,
+        rgba(0,255,255,0) 140deg 220deg,
+        rgba(0,255,255,.18) 280deg,
+        rgba(0,255,255,0) 330deg 360deg);
+    filter: blur(8px) saturate(1.3);
+    animation:
+    pulse 3.8s ease-in-out infinite,
+    waves 9s linear infinite,
+    swirl 14s linear infinite;
+}
+
+@keyframes pulse { 50% { filter: blur(10px) saturate(1.5) brightness(1.2); transform: scale(1.04);} }
+@keyframes waves { 50% { background-position: 2% 0, center; } }
+@keyframes swirl { to { transform: rotate(360deg); } }
+
+.hero{
+    min-height:100vh;
+    background: url("../../images/portail_niveaux.png") center/cover no-repeat;
+    position: relative;
+}
+
+.portal-link{
+    position:absolute;
+    left:50%; top:50%;
+  width:40vmin; height:40vmin; /* ajuste le diamètre */
+    transform: translate(-50%,-50%);
+    border-radius:50%;
+    z-index:10; cursor:pointer; background:transparent;
+}
+.portal-link:hover{ outline-color: rgba(169,255,255,.9); }
