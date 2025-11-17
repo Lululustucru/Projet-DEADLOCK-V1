@@ -1,22 +1,27 @@
 // portail_niveaux.js
 
-// On attend que le DOM soit prêt (au cas où le script serait chargé dans le <head>)
-document.addEventListener("DOMContentLoaded", () => {
+// Ce script est chargé en bas du <body>, donc le DOM est déjà prêt.
+// Pas besoin de DOMContentLoaded ici.
 const canvas = document.getElementById("portail_canvas");
-const portalElement = document.getElementById(".portal-link");
+const portalElement = document.querySelector(".portal-link");
+
+console.log("SCRIPT CHARGÉ");
+console.log("canvas =", canvas);
+console.log("portalElement =", portalElement);
 
 if (!canvas || !portalElement) {
-    console.warn("Canvas ou portail introuvable.");
-    return;
+console.warn("Canvas ou portail introuvable.");
+  // on ne return PAS tout de suite, comme ça on verra s'il y a une erreur plus précise
 }
 
+if (!canvas || !portalElement) {
+  // on arrête ici pour éviter les erreurs en chaîne
+} else {
 const ctx = canvas.getContext("2d");
 
-  // Tableau qui contient toutes les particules actives
 let particles = [];
 let lastTime = 0;
 
-  // Ajuste la taille du canvas à celle du conteneur (#main)
 function resizeCanvas() {
     const rect = canvas.parentElement.getBoundingClientRect();
     canvas.width = rect.width;
@@ -26,22 +31,20 @@ function resizeCanvas() {
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-  // Calcule le centre du portail en coordonnées canvas
 function getPortalCenter() {
     const portalRect = portalElement.getBoundingClientRect();
     const canvasRect = canvas.getBoundingClientRect();
 
     return {
     x: portalRect.left - canvasRect.left + portalRect.width / 2,
-    y: portalRect.top - canvasRect.top + portalRect.height * 0.55, // un peu plus bas que le centre géométrique
+      y: portalRect.top - canvasRect.top + portalRect.height * 0.55,
     };
 }
 
-  // Crée une particule
 function createParticle(intense = false) {
     const center = getPortalCenter();
 
-    const angle = Math.random() * Math.PI * 2; // 0 → 2π (toutes directions)
+    const angle = Math.random() * Math.PI * 2;
     const baseSpeed = intense ? 120 : 70;
     const speed = baseSpeed + Math.random() * (intense ? 80 : 40);
 
@@ -64,11 +67,9 @@ function createParticle(intense = false) {
     });
 }
 
-  // Met à jour toutes les particules
 function update(delta) {
-    const dt = delta / 1000; // ms → s
+    const dt = delta / 1000;
 
-    // Spawn régulier pendant l'idle
     if (Math.random() < 0.18) {
     createParticle(false);
     }
@@ -80,7 +81,6 @@ function update(delta) {
       p.x += p.vx * dt;
       p.y += p.vy * dt;
 
-      // Léger ralentissement pour un mouvement plus organique
       p.vx *= 0.985;
       p.vy *= 0.985;
 
@@ -88,15 +88,13 @@ function update(delta) {
     });
 }
 
-  // Dessine toutes les particules
 function draw() {
-    // Fond transparent noir pour créer des traînées
-    ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // pour tester, on efface complètement (pas de voile noir)
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     for (const p of particles) {
-      const t = p.age / p.life; // 0 → 1
-      const alpha = p.alphaStart * (1 - t); // fade out
+    const t = p.age / p.life;
+      const alpha = p.alphaStart * (1 - t);
 
     const gradient = ctx.createRadialGradient(
         p.x,
@@ -107,19 +105,17 @@ function draw() {
         p.size * 2.5
     );
 
-      // centre très lumineux, bord transparent
     gradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
     gradient.addColorStop(0.25, `rgba(180, 245, 255, ${alpha})`);
     gradient.addColorStop(1, "rgba(0, 200, 255, 0)");
 
     ctx.fillStyle = gradient;
     ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size * 2.5, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y, p.size * 2.5, 0, Math.PI * 2);
     ctx.fill();
     }
 }
 
-  // Boucle d’animation principale
 function loop(timestamp) {
     if (!lastTime) lastTime = timestamp;
     const delta = timestamp - lastTime;
@@ -133,16 +129,15 @@ function loop(timestamp) {
 
 requestAnimationFrame(loop);
 
-  // Effets supplémentaires : burst au survol / clic
 portalElement.addEventListener("mouseenter", () => {
     for (let i = 0; i < 40; i++) {
-        createParticle(true);
+    createParticle(true);
     }
-    });
+});
 
 portalElement.addEventListener("click", () => {
     for (let i = 0; i < 90; i++) {
-        createParticle(true);
+    createParticle(true);
     }
-    });
 });
+}
