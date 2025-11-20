@@ -1,76 +1,76 @@
 const canvas = document.getElementById("portail_canvas");
 const portalElement = document.querySelector(".portal-link");
+const main = document.getElementById("main");
+const flash = document.getElementById("flash-portail");
 
 console.log("SCRIPT CHARGÉ");
 console.log("canvas =", canvas);
 console.log("portalElement =", portalElement);
 
-if (!canvas || !portalElement) {
-console.warn("Canvas ou portail introuvable.");
-}
-
-if (!canvas || !portalElement) {
+if (!canvas || !portalElement || !main || !flash) {
+  console.warn("Canvas, portail ou flash introuvable.");
 } else {
-const ctx = canvas.getContext("2d");
+  const ctx = canvas.getContext("2d");
 
-let particles = [];
-let lastTime = 0;
+  // --- PARTICULES --- //
+  let particles = [];
+  let lastTime = 0;
 
-function resizeCanvas() {
+  function resizeCanvas() {
     const rect = canvas.parentElement.getBoundingClientRect();
     canvas.width = rect.width;
     canvas.height = rect.height;
-}
+  }
+  window.addEventListener("resize", resizeCanvas);
+  resizeCanvas();
 
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
-
-function getPortalCenter() {
+  function getPortalCenter() {
     const portalRect = portalElement.getBoundingClientRect();
     const canvasRect = canvas.getBoundingClientRect();
 
     return {
-    x: portalRect.left - canvasRect.left + portalRect.width / 2,
+      x: portalRect.left - canvasRect.left + portalRect.width / 2,
       y: portalRect.top - canvasRect.top + portalRect.height * 0.55,
     };
-}
+  }
 
-function createParticle(intense = false) {
+  function createParticle(intense = false) {
     const center = getPortalCenter();
 
     const angle = Math.random() * Math.PI * 2;
-    const baseSpeed = intense ? 120 : 70;
-    const speed = baseSpeed + Math.random() * (intense ? 80 : 40);
+    const baseSpeed = intense ? 200 : 120; // plus violent pour être BIEN visible
+    const speed = baseSpeed + Math.random() * (intense ? 120 : 60);
 
     const vx = Math.cos(angle) * speed;
     const vy = Math.sin(angle) * speed;
 
     const life = intense
-      ? 0.6 + Math.random() * 0.4
-      : 1.0 + Math.random() * 0.5;
+      ? 0.5 + Math.random() * 0.3
+      : 0.9 + Math.random() * 0.4;
 
     particles.push({
-    x: center.x,
-    y: center.y,
-    vx,
-    vy,
-    life,
-    age: 0,
-      size: intense ? 4 + Math.random() * 4 : 2 + Math.random() * 3,
-    alphaStart: intense ? 1.0 : 0.75,
+      x: center.x,
+      y: center.y,
+      vx,
+      vy,
+      life,
+      age: 0,
+      size: intense ? 6 + Math.random() * 6 : 3 + Math.random() * 4,
+      alphaStart: intense ? 1.2 : 0.9,
     });
-}
+  }
 
-function update(delta) {
+  function update(delta) {
     const dt = delta / 1000;
 
-    if (Math.random() < 0.18) {
-    createParticle(false);
+    // flux continu assez dense pour bien voir
+    if (Math.random() < 0.35) {
+      createParticle(false);
     }
 
     particles = particles.filter((p) => {
-    p.age += dt;
-    if (p.age > p.life) return false;
+      p.age += dt;
+      if (p.age > p.life) return false;
 
       p.x += p.vx * dt;
       p.y += p.vy * dt;
@@ -78,38 +78,38 @@ function update(delta) {
       p.vx *= 0.985;
       p.vy *= 0.985;
 
-    return true;
+      return true;
     });
-}
+  }
 
-function draw() {
+  function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     for (const p of particles) {
-    const t = p.age / p.life;
+      const t = p.age / p.life;
       const alpha = p.alphaStart * (1 - t);
 
-    const gradient = ctx.createRadialGradient(
+      const gradient = ctx.createRadialGradient(
         p.x,
         p.y,
         0,
         p.x,
         p.y,
-        p.size * 2.5
-    );
+        p.size * 3
+      );
 
-    gradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
-    gradient.addColorStop(0.25, `rgba(180, 245, 255, ${alpha})`);
-    gradient.addColorStop(1, "rgba(0, 200, 255, 0)");
+      gradient.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+      gradient.addColorStop(0.3, `rgba(170, 240, 255, ${alpha})`);
+      gradient.addColorStop(1, "rgba(0, 200, 255, 0)");
 
-    ctx.fillStyle = gradient;
-    ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size * 2.5, 0, Math.PI * 2);
-    ctx.fill();
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+      ctx.fill();
     }
-}
+  }
 
-function loop(timestamp) {
+  function loop(timestamp) {
     if (!lastTime) lastTime = timestamp;
     const delta = timestamp - lastTime;
     lastTime = timestamp;
@@ -118,19 +118,73 @@ function loop(timestamp) {
     draw();
 
     requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  // --- ANIMATION CAMÉRA --- //
+function animationcamera(duration = 500) {
+  return new Promise((resolve) => {
+    const start = performance.now();
+    main.style.transformOrigin = "50% 50%";
+
+    function etape(now) {
+      const t = Math.min(1, (now - start) / duration);
+      const ease = t * t;
+      const rotate = ease * 6;
+      const scale = 1 + ease * 1.8;
+
+      // on laisse le zoom appliqué
+      main.style.transform = `scale(${scale}) rotate(${rotate}deg)`;
+
+      if (t < 1) {
+        requestAnimationFrame(etape);
+      } else {
+        // IMPORTANT : on NE touche PAS au transform ici
+        resolve();
+      }
+    }
+
+    requestAnimationFrame(etape);
+  });
 }
 
-requestAnimationFrame(loop);
 
-portalElement.addEventListener("mouseenter", () => {
+  // --- FLASH --- //
+  function flash_portail() {
+    flash.style.opacity = "1";
+    setTimeout(() => {
+      flash.style.opacity = "0";
+    }, 400);
+  }
+
+  // --- INTERACTIONS --- //
+
+  // survol : burst
+  portalElement.addEventListener("mouseenter", () => {
     for (let i = 0; i < 40; i++) {
-    createParticle(true);
+      createParticle(true);
     }
-});
+  });
 
-portalElement.addEventListener("click", () => {
-    for (let i = 0; i < 90; i++) {
+  // clic : on bloque la nav, on joue l’anim, puis on redirige
+portalElement.addEventListener("click", async (event) => {
+  event.preventDefault();
+
+  // gros burst de particules
+  for (let i = 0; i < 120; i++) {
     createParticle(true);
-    }
-});
+  }
+
+  // zoom + vortex
+  await animationcamera(550);
+
+  // flash pendant que l'écran est encore zoomé
+  flash_portail();
+
+  // quand le flash est presque fini, on reset + on change de page
+  setTimeout(() => {
+    main.style.transform = ""; // si tu restes sur la page
+    window.location.href = portalElement.getAttribute("href");
+    }, 220);
+  });
 }

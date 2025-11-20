@@ -108,3 +108,13 @@ body {
     pointer-events: none;
     z-index: 5;
 }
+
+#flash-portail{
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center,rgba(0,255,255,0.9),rgba(0,255,255,0) 60%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 20;
+    transition: opacity 0.25s ease-out;
+}
