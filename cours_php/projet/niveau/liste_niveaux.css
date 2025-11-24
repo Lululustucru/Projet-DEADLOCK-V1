@@ -1,6 +1,11 @@
-#niveaux{
-    display: inline;
-    justify-content: center;
-    gap: 20px;
-    font-family: 'Arial', sans-serif;
+#monolithe_facile.bloc{
+    background: url() center no-repeat;
+}
+
+#monolithe_moyen.bloc{
+    background: url() center no-repeat;
+}
+
+#monolithe_difficile.bloc{
+    background: url() center no-repeat;
 }
